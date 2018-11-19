@@ -1,6 +1,8 @@
 from django import forms
 from .models import User
 from django.contrib.auth import password_validation
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 
 class UserRegistrationForm(forms.ModelForm):
@@ -9,12 +11,12 @@ class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(
         label=("Password"),
         widget=forms.PasswordInput,
-        help_text=password_validation.password_validators_help_text_html(),
+        help_text=password_validation.password_validators_help_text_html(),required=True
     )
     confirm_password = forms.CharField(
         label=("Password confirmation"),
         widget=forms.PasswordInput,
-        help_text=("Enter the same password as before, for verification."),
+        help_text=("Enter the same password as before, for verification."),required=True
     )
     class Meta:
         model = User
@@ -29,3 +31,11 @@ class UserRegistrationForm(forms.ModelForm):
 
         if password != confirm_password:
             raise forms.ValidationError('password and confirm password does not match')
+        emailErrorMessage=''
+        try:
+            validate_email(email)
+        except forms.ValidationError:
+            emailErrorMessage = 'Please enter valid email address'
+
+        if emailErrorMessage != '':
+            raise forms.ValidationError(emailErrorMessage)

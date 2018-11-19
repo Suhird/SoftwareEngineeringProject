@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 class User(models.Model):
     first_name = models.CharField(max_length=120, blank=False)
     last_name = models.CharField(max_length=120, blank=False)
-    email = models.EmailField(blank=False)
+    email = models.EmailField(blank=False,unique=True)
     password = models.CharField(max_length=100, blank=False)
     last_login = models.DateTimeField(_('last login'), blank=True, null=True)
     is_active = models.BooleanField(default=False,db_column='is_active')

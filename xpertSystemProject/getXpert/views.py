@@ -20,7 +20,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 
-from django.contrib.auth.decorators import login_required, login_forbidden
+from django.contrib.auth.decorators import login_required
 
 from .models import User
 
@@ -78,6 +78,7 @@ class UserRegistrationView(CreateView):
 
 def user_login(request):
 	context = RequestContext(request)
+	context_return={}
 	if request.method == 'POST':
 		email = request.POST['email']
 		password = request.POST['password']
@@ -93,7 +94,9 @@ def user_login(request):
 			else:
 				return HttpResponse("is_active not working")
 		else:
-			print('Invalid login details' + email + ' ' + password)
+			error='Invalid login details'
+			context_return['error']=error
+			return render(request,'Login.html',context_return)
 
 	else:
 		return render(request, 'Login.html', {})
