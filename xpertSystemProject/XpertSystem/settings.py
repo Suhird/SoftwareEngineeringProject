@@ -151,3 +151,4 @@ AUTHENTICATION_BACKENDS = {
 }
 
 LOGIN_URL = reverse_lazy('login')
+LOGGED_IN_HOME = reverse_lazy('thanks_page')

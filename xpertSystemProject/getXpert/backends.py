@@ -7,6 +7,7 @@ class UserAuthBackend(ModelBackend):
         try:
             user = User.objects.get(email=username)
             if check_password(password, user.password):
+                #User.object
                 return user
             else:
                 return None

@@ -1,9 +1,9 @@
 from django.shortcuts import (
-    render, HttpResponseRedirect, HttpResponse, render_to_response,redirect
-    )
+	render, HttpResponseRedirect, HttpResponse, render_to_response, redirect
+)
 
 from django.views.generic import (
-    TemplateView, CreateView, FormView,
+	TemplateView, CreateView, FormView,
 )
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import UserRegistrationForm
@@ -11,7 +11,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import (
-    authenticate,login,logout
+	authenticate, login, logout
 )
 from django.template import RequestContext
 from django.utils.decorators import method_decorator
@@ -20,27 +20,29 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, login_forbidden
 
 from .models import User
+
+
 # Create your views here.
 
 
 class UserRegistrationView(CreateView):
-    template_name = 'registration.html'
-    form_class = UserRegistrationForm
-    success_url = reverse_lazy('landing_page')
+	template_name = 'signup.html'
+	form_class = UserRegistrationForm
+	success_url = reverse_lazy('landing_page')
 
-    def form_valid(self, form):
-        #print('in form valid')
-        new_object = form.save(commit=False)
-        #password = form.cleaned_data['password']
-        #print(password)
-        new_object.password = make_password(form.cleaned_data['password'])
-        new_object.save()
-        #form.save()
-        return super(UserRegistrationView, self).form_valid(form)
-
+	def form_valid(self, form):
+		# print('in form valid')
+		new_object = form.save(commit=False)
+		# password = form.cleaned_data['password']
+		# print(password)
+		new_object.password = make_password(form.cleaned_data['password'])
+		new_object.is_active = True
+		new_object.save()
+		# form.save()
+		return super(UserRegistrationView, self).form_valid(form)
 
 
 # class LoginView(FormView):
@@ -75,40 +77,41 @@ class UserRegistrationView(CreateView):
 #
 
 def user_login(request):
-    context = RequestContext(request)
-    if request.method == 'POST':
-        email = request.POST['email']
-        password = request.POST['password']
-        user = authenticate(username=email, password=password)
-        if user is not None:
-            if user.is_active:
-                login(request,user)
-                print('login sucessfull')
-                return redirect('thanks_page')
-            else:
-                return HttpResponse("is_active not working")
+	context = RequestContext(request)
+	if request.method == 'POST':
+		email = request.POST['email']
+		password = request.POST['password']
+		user = authenticate(username=email, password=password)
+		if user is not None:
+			# is_active is checked to make sure that the user
+			# has not deleted the account.
+			# For deletion we don't delete the account we set the is_active to False
+			if user.is_active:
+				login(request, user)
+				print('login sucessfull')
+				return redirect('thanks_page')
+			else:
+				return HttpResponse("is_active not working")
+		else:
+			print('Invalid login details' + email + ' ' + password)
 
-        else:
-            print('Invalid login details' + email +' '+ password)
-
-    else:
-        return render(request,'login.html',{})
+	else:
+		return render(request, 'Login.html', {})
 
 
 @login_required
 def user_logout(request):
-    context = RequestContext(request)
-    logout(request)
-    return redirect('login')
+	context = RequestContext(request)
+	logout(request)
+	return redirect('login')
 
 
-
+# @method_decorator(login_forbidden, name='dispatch')
 class LandingPageView(TemplateView):
-    template_name = 'landing.html'
+	template_name = 'index.html'
 
 
 class Thanks(TemplateView):
-    template_name = 'thanks.html'
+	template_name = 'thanks.html'
 
-#class LoginView():
-
+# class LoginView():
