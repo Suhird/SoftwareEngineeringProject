@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <title>getXpert</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -46,8 +47,13 @@
                     </h2>
                     <hr class="colorgraph">
                     <div class="row">
+                        {% if error %}
+                        <div class="alert alert-danger" role="alert">
+                            Please enter correct username or password
+                        </div>
+                        {% endif %}
                         <div class="col-xs-12 col-sm-12 col-md-12">
-                            <div class="form-group">
+                             <div class="form-group">
                                 <input type="text" name="email" id="User_name" class="form-control input-lg"
                                        placeholder="Enter Email Id" tabindex="1">
                             </div>

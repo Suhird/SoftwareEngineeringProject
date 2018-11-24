@@ -26,16 +26,12 @@ class UserRegistrationForm(forms.ModelForm):
         cleaned_data = super(UserRegistrationForm, self).clean()
         password = cleaned_data.get('password')
         #for checking if email exits
-        email = cleaned_data.get('email')
+        form_email = cleaned_data.get('email')
         confirm_password = cleaned_data.get('confirm_password')
-
+        if User.objects.filter(email=form_email).exists():
+	        raise forms.ValidationError('email id already exists. Please choose another email')
         if password != confirm_password:
             raise forms.ValidationError('password and confirm password does not match')
-        emailErrorMessage=''
-        try:
-            validate_email(email)
-        except forms.ValidationError:
-            emailErrorMessage = 'Please enter valid email address'
 
-        if emailErrorMessage != '':
-            raise forms.ValidationError(emailErrorMessage)
+
+
