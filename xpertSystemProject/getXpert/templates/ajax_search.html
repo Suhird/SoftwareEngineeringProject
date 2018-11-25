@@ -1,0 +1,7 @@
+{% if user_profile_object.count > 0 %}
+{%for profile in user_profile_object%}
+<li>{{ profile.user.first_name }},{{ profile.skills }}</li>
+{% endfor %}
+{% else %}
+<p>Opps!!No Xpert found.But we are Xpert too.Try us!!</p>
+{% endif %}

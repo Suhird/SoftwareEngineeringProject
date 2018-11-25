@@ -8,6 +8,7 @@ urlpatterns = [
     url(r'^logout/$', user_logout, name='logout'),
     url(r'^thanks/$', Thanks.as_view(), name='thanks_page'),
     url(r'^home/$', Thanks.as_view(), name='home'),
+	url(r'^search/$', search_user, name='search')
 
 
 ]

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search</title>
+    {% load static %}
+</head>
+<body>
+<form method="post" action="% url search%" id="search_form">
+    {% csrf_token %}
+    <table>
+	<tr><p><strong>Fields marked as * are mandatory</strong></p></tr>
+	<tr><a href="{% url 'logout' %}">Logout</a></tr>
+        <tr>
+            <td><label for="search">Search* :</label></td>
+            <td><input type="text" name="searchSkills" id="search" required></td>
+			<td><select name="searchLocation" id="searchLocation" required>
+			{% if searchLocationList%}
+			{%for searchLocationItem in searchLocationList%}
+  <option value="{{ searchLocationItem }}">{{ searchLocationItem}}</option>  
+  {% endfor %}
+  {% endif %}
+</select></td>
+			<!--td><input type="text" name="searchLocation" id="searchLocation" required></td-->
+			<td><button type="submit">Search Profiles</button></td>
+			<td><button onclick="document.getElementById('search').value = ''">Clear</button></td>
+		</tr>		
+      </table>
+	  <table>
+	  <tr>
+		<td>
+			<ul id="search_result"></ul>
+			</td>		
+        </tr>
+	  </table>
+</form>
+</body>
+<script type="text/javascript" src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/glm-ajax.js' %}"></script>
+
+<script type="text/javascript">
+	$(document).on('submit','#search_form',function(e){
+	e.preventDefault();//prevent the page from getting refreshed
+	
+	$.ajax({
+	type:'POST',
+	url:'/getXpert/search/',
+	data:{
+	searchSkills:$('#search').val(),
+	searchLocation:$('#searchLocation').val(),
+	csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+	},
+	success:searchSuccess
+	});
+	});
+	function searchSuccess(data,textStatus,jqxHR){
+	$('#search_result').html(data)
+	}
+</script>
+</html>

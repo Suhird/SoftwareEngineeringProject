@@ -22,7 +22,8 @@ from django.views.decorators.debug import sensitive_post_parameters
 
 from django.contrib.auth.decorators import login_required
 
-from .models import User
+from .models import User,User_profile
+from django.db.models import Q
 
 
 # Create your views here.
@@ -118,3 +119,19 @@ class Thanks(TemplateView):
 	template_name = 'thanks.html'
 
 # class LoginView():
+
+@login_required
+def search_user(request):
+	if request.method == 'POST' and request.POST['searchSkills'] and request.POST['searchLocation']:
+		searchSkills = str(request.POST['searchSkills']).strip()
+		searchLocation = str(request.POST['searchLocation']).strip()
+		print(searchSkills)
+		searchLocationList = list(User_profile.objects.order_by().values_list('Available_service_area',flat=True).distinct())		
+		user_profile_object = User_profile.objects.filter(Q(skills__icontains=searchSkills)& Q(Available_service_area__icontains = searchLocation))#icontains is for case insensitive search
+		return render(request,'ajax_search.html',{'user_profile_object':user_profile_object,'searchLocationList':searchLocationList})
+	else:
+		searchLocationList = list(User_profile.objects.order_by().values_list('Available_service_area',flat=True).distinct())
+		print(searchLocationList)
+		return render(request,'search.html',{'searchLocationList':searchLocationList})
+	
+	
