@@ -46,6 +46,11 @@ class UserRegistrationView(CreateView):
 		return super(UserRegistrationView, self).form_valid(form)
 
 
+class UserProfileCreationView(CreateView):
+	template_name = 'createProfile.html'
+
+
+
 # class LoginView(FormView):
 #     success_url = reverse_lazy("thanks_page")
 #     form_class= AuthenticationForm
