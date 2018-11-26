@@ -1,5 +1,5 @@
 from django import forms
-from .models import User
+from .models import User, User_profile
 from django.contrib.auth import password_validation
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
@@ -32,6 +32,5 @@ class UserRegistrationForm(forms.ModelForm):
 	        raise forms.ValidationError('email id already exists. Please choose another email')
         if password != confirm_password:
             raise forms.ValidationError('password and confirm password does not match')
-
 
 
