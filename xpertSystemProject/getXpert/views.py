@@ -129,6 +129,11 @@ def user_logout(request):
 # @method_decorator(login_forbidden, name='dispatch')
 class LandingPageView(TemplateView):
 	template_name = 'index.html'
+	def as_view(cls, **initkwargs):
+
+		def dispatch(self, request, *args, **kwargs):
+			print(self.request.user)
+
 
 
 class Thanks(TemplateView):
