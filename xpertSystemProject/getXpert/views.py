@@ -1,29 +1,27 @@
 from django.shortcuts import (
 	render, HttpResponseRedirect, HttpResponse, render_to_response, redirect
 )
-
+from .utils import identicon_generation
 from django.views.generic import (
 	TemplateView, CreateView, FormView,
 )
-from django.contrib.auth.mixins import LoginRequiredMixin
-from .forms import UserRegistrationForm
+import json
+from django.contrib import messages
+from .forms import UserRegistrationForm, UserProfileForm
 from django.urls import reverse_lazy
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.forms import AuthenticationForm
+
 from django.contrib.auth import (
 	authenticate, login, logout
 )
 from django.template import RequestContext
 from django.utils.decorators import method_decorator
-from django.utils.http import is_safe_url
-from django.views.decorators.cache import never_cache
-from django.views.decorators.csrf import csrf_protect
-from django.views.decorators.debug import sensitive_post_parameters
+
 
 from django.contrib.auth.decorators import login_required
-from django.contrib import admin
-from .models import User,User_profile
+from django.views.decorators.cache import never_cache
 from django.db.models import Q
+from .models import User, User_profile
 
 
 # Create your views here.
@@ -32,7 +30,7 @@ from django.db.models import Q
 class UserRegistrationView(CreateView):
 	template_name = 'signup.html'
 	form_class = UserRegistrationForm
-	success_url = reverse_lazy('landing_page')
+	success_url = reverse_lazy('registration_page')
 
 	def form_valid(self, form):
 		# print('in form valid')
@@ -43,44 +41,53 @@ class UserRegistrationView(CreateView):
 		new_object.is_active = True
 		new_object.save()
 		# form.save()
+		messages.success(self.request,'Registration Successful')
 		return super(UserRegistrationView, self).form_valid(form)
 
 
-class UserProfileCreationView(CreateView):
-	template_name = 'createProfile.html'
+@never_cache
+@login_required
+def UserProfileCreationView(request):
+	#print(request.user.email)
+	user_email = request.user.email
+	gravatar_url = identicon_generation(user_email)
+	context = {'img_url':gravatar_url}
+	if request.method =='POST':
+		form = UserProfileForm(request.POST)
+		if form.is_valid():
+			print(request.POST.get('Gender'))
+			obj = User_profile()
+			obj.user = request.user
+			obj.profile_pic = gravatar_url
+			obj.gender = form.cleaned_data['gender']
+			obj.date_of_birth = form.cleaned_data['date_of_birth']
+			permanent_add = form.cleaned_data['permanent_address']
+			country = request.POST.get('category')
+			state = request.POST.get('activity')
+			permanent_add = permanent_add + ", "+state+", "+country
+			obj.permanent_address = permanent_add
+			obj.qualification = form.cleaned_data['qualification']
+			obj.occupation = form.cleaned_data['occupation']
+			skills = form.cleaned_data['skills']
+			skills_list = skills.split(',')
+			skills_obj = json.dumps(skills_list)
+			obj.skills = skills_obj
+			obj.phone_number = form.cleaned_data['phone_number']
+			obj.Available_service_area = form.cleaned_data['Available_service_area']
+			obj.languages_spoken = form.cleaned_data['languages_spoken']
+			obj.Working_experience = form.cleaned_data['Working_experience']
+			obj.charges = form.cleaned_data['charges']
+			obj.Profile_Tagline = form.cleaned_data['Profile_Tagline']
+			obj.save()
+			return HttpResponseRedirect(reverse_lazy('thanks_page'))
 
+		else:
+			print('invalidForm')
+			context = {'form':form}
+			return render(request, 'createProfile.html', context)
+			#return HttpResponseRedirect(reverse_lazy('createProfile'))
 
-
-# class LoginView(FormView):
-#     success_url = reverse_lazy("thanks_page")
-#     form_class= AuthenticationForm
-#     redirect_field_name = REDIRECT_FIELD_NAME
-#
-#     @method_decorator(sensitive_post_parameters('password'))
-#     @method_decorator(csrf_protect)
-#     @method_decorator(never_cache)
-#     def dispatch(self, request, *args, **kwargs):
-#         request.session.set_test_cookie()
-#
-#         return super(LoginView, self).dispatch(request, *args, **kwargs)
-#
-#     def form_valid(self, form):
-#         auth_login(self.request, form.get_user())
-#
-#         #If the test cookie worked, go ahead and
-#         #delete it since it is no longer needed
-#         if self.request.session.test_cookie_worked():
-#             self.request.session.delete_test_cookie()
-#
-#
-#         return super(LoginView, self).form_valid(form)
-#
-#     def get_success_url(self):
-#         redirect_to = self.request.GET(self.redirect_field_name)
-#         if not is_safe_url(url=redirect_to, host=self.request.get_host()):
-#             redirect_to = self.success_url
-#         return redirect_to
-#
+	return render(request, 'createProfile.html',context)
 
 def user_login(request):
 	context = RequestContext(request)
@@ -96,7 +103,11 @@ def user_login(request):
 			if user.is_active:
 				login(request, user)
 				print('login sucessfull')
-				return redirect('thanks_page')
+				db_user = User_profile.objects.filter(user=request.user)
+				if db_user:
+					return redirect('thanks_page')
+				else:
+					return redirect('createProfile')
 			else:
 				return HttpResponse("is_active not working")
 		else:
@@ -131,12 +142,14 @@ def search_user(request):
 		searchSkills = str(request.POST['searchSkills']).strip()
 		searchLocation = str(request.POST['searchLocation']).strip()
 		print(searchSkills)
-		searchLocationList = list(User_profile.objects.order_by().values_list('Available_service_area',flat=True).distinct())		
-		user_profile_object = User_profile.objects.filter(Q(skills__icontains=searchSkills)& Q(Available_service_area__icontains = searchLocation))#icontains is for case insensitive search
-		return render(request,'ajax_search.html',{'user_profile_object':user_profile_object,'searchLocationList':searchLocationList})
+		searchLocationList = list(
+			User_profile.objects.order_by().values_list('Available_service_area', flat=True).distinct())
+		user_profile_object = User_profile.objects.filter(Q(skills__icontains=searchSkills) & Q(
+			Available_service_area__icontains=searchLocation))  # icontains is for case insensitive search
+		return render(request, 'ajax_search.html',
+		              {'user_profile_object': user_profile_object, 'searchLocationList': searchLocationList})
 	else:
-		searchLocationList = list(User_profile.objects.order_by().values_list('Available_service_area',flat=True).distinct())
+		searchLocationList = list(
+			User_profile.objects.order_by().values_list('Available_service_area', flat=True).distinct())
 		print(searchLocationList)
-		return render(request,'search.html',{'searchLocationList':searchLocationList})
-	
-	
+		return render(request, 'search.html', {'searchLocationList': searchLocationList})

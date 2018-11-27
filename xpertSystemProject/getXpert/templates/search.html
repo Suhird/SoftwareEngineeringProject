@@ -17,20 +17,20 @@
 			<td><select name="searchLocation" id="searchLocation" required>
 			{% if searchLocationList%}
 			{%for searchLocationItem in searchLocationList%}
-  <option value="{{ searchLocationItem }}">{{ searchLocationItem}}</option>  
+  <option value="{{ searchLocationItem }}">{{ searchLocationItem}}</option>
   {% endfor %}
   {% endif %}
 </select></td>
 			<!--td><input type="text" name="searchLocation" id="searchLocation" required></td-->
 			<td><button type="submit">Search Profiles</button></td>
 			<td><button onclick="document.getElementById('search').value = ''">Clear</button></td>
-		</tr>		
+		</tr>
       </table>
 	  <table>
 	  <tr>
 		<td>
 			<ul id="search_result"></ul>
-			</td>		
+			</td>
         </tr>
 	  </table>
 </form>
@@ -41,7 +41,7 @@
 <script type="text/javascript">
 	$(document).on('submit','#search_form',function(e){
 	e.preventDefault();//prevent the page from getting refreshed
-	
+
 	$.ajax({
 	type:'POST',
 	url:'/getXpert/search/',

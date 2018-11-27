@@ -32,14 +32,9 @@ class User_profile(models.Model):
 		related_name='user',
 		on_delete=models.CASCADE
 	)
-	date_of_birth = models.DateField(max_length=10, blank=True)
-	GENDER_CHOICES = (
-		('M', 'Male'),
-		('F', 'Female'),
-		('O', 'Other'),
-
-	)
-	gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
+	profile_pic = models.CharField(max_length=256, blank=True, null=True)
+	date_of_birth = models.CharField(max_length=10, blank=True)
+	gender = models.CharField(max_length=10, blank=True)
 	# email = models.EmailField(blank=False)
 	permanent_address = models.CharField(max_length=300, blank=False)
 	qualification = models.CharField(max_length=120, blank=True)
@@ -55,7 +50,7 @@ class User_profile(models.Model):
 	#     (u'E', u'English'),
 	#     (u'F', u'French'),
 	# )
-	languages_known = models.CharField(max_length=10, blank=True)
+	languages_spoken = models.CharField(max_length=10, blank=True)
 	Working_experience = models.CharField(max_length=120, blank=True)
 	charges = models.CharField(max_length=5, blank=True)
-	Profile_Tagline = models.TextField(blank=False)
+	Profile_Tagline = models.TextField(blank=True)
