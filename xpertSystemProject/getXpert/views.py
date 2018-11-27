@@ -21,7 +21,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 
 from django.contrib.auth.decorators import login_required
-
+from django.contrib import admin
 from .models import User,User_profile
 from django.db.models import Q
 
