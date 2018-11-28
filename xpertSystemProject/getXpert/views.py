@@ -3,7 +3,7 @@ from django.shortcuts import (
 )
 from .utils import identicon_generation
 from django.views.generic import (
-	TemplateView, CreateView, FormView,
+	TemplateView, CreateView, FormView, DetailView
 )
 import json
 from django.contrib import messages
@@ -95,7 +95,7 @@ def user_login(request):
 	if request.method == 'POST':
 		email = request.POST['email']
 		password = request.POST['password']
-		user = authenticate(username=email, password=password)
+		user = authenticate(username=email.lower(), password=password)
 		if user is not None:
 			# is_active is checked to make sure that the user
 			# has not deleted the account.
@@ -129,15 +129,16 @@ def user_logout(request):
 # @method_decorator(login_forbidden, name='dispatch')
 class LandingPageView(TemplateView):
 	template_name = 'index.html'
-	def as_view(cls, **initkwargs):
-
-		def dispatch(self, request, *args, **kwargs):
-			print(self.request.user)
+	def dispatch(self, request, *args, **kwargs):
+		if self.request.user.id is None:
+			return super(LandingPageView, self).dispatch(request, *args, **kwargs)
+		else:
+			return redirect('thanks_page')
 
 
 
 class Thanks(TemplateView):
-	template_name = 'thanks.html'
+	template_name = 'view_profile.html'
 
 # class LoginView():
 
