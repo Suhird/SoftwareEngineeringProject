@@ -21,6 +21,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.db.models import Q
 from .models import User, User_profile
+from django.db.models.functions import Lower
 
 
 # Create your views here.
@@ -55,7 +56,7 @@ def UserProfileCreationView(request):
 	if request.method == 'POST':
 		form = UserProfileForm(request.POST)
 		if form.is_valid():
-			print(request.POST.get('Gender'))
+			# (request.POST.get('Gender'))
 			obj = User_profile()
 			obj.user = request.user
 			obj.profile_pic = gravatar_url
@@ -109,7 +110,7 @@ def user_login(request):
 				login(request, user)
 				db_user = User_profile.objects.filter(user=request.user)
 				if db_user:
-					print(request.user.id)
+					# print(request.user.id)
 					return redirect('home', pk=request.user.id)
 				else:
 					return redirect('createProfile')
@@ -170,27 +171,38 @@ def view_profile(request, pk):
 @login_required
 def search_user(request):
 	user_profile_object = {}
-	if request.method == 'POST' and request.POST['searchSkills'] and request.POST['searchLocation']:
-		searchSkills = str(request.POST['searchSkills']).strip()
-		searchLocation = str(request.POST['searchLocation']).strip()
-		print(searchSkills)
-		searchLocationList = list(
-			User_profile.objects.order_by().values_list('Available_service_area', flat=True).distinct())
-		user_profile_object = User_profile.objects.filter(Q(skills__icontains=searchSkills) & Q(
-			Available_service_area__icontains=searchLocation))  # icontains is for case insensitive search
-		print(user_profile_object)
-		print("Returning template as ajax_search.html")
+	if request.method == 'POST' and (request.POST['searchSkills'] or request.POST['searchLocation']):
+		search_skills = str(request.POST['searchSkills']).strip().lower()
+		search_location = str(request.POST['searchLocation']).strip().lower()
+		# print('Input Skills', search_skills)
+		# if search_skills == '':
+		# 	print('skills is blank String')
+		# print('Input Location', search_location)
+		# if search_location == '':
+		# 	print('Input search loc is blank string')
+		# searchLocationList = list(
+		# 	User_profile.objects.order_by().values_list('Available_service_area', flat=True).distinct())
+		if search_skills == '':
+			user_profile_object = User_profile.objects.annotate(service_area=Lower('Available_service_area'), skill = Lower('skills')).filter(Q(skills=search_skills) | Q(service_area=search_location))
+		elif search_location == '':
+			user_profile_object = User_profile.objects.annotate(service_area=Lower('Available_service_area')).filter(
+				Q(skills__icontains=search_skills) | Q(service_area=search_location))
+		else:
+			user_profile_object = User_profile.objects.filter(
+				Q(skills__icontains=search_skills) & Q(Available_service_area__icontains=search_location))
+		# print(user_profile_object)
+		# print("Returning template as ajax_search.html")
 		return render(request, 'ajax_search.html',
-		              {'user_profile_object': user_profile_object, 'searchLocationList': searchLocationList})
+		              {'user_profile_object': user_profile_object})
+
 	elif request.method == 'POST' and not request.POST['searchSkills'] and not request.POST['searchLocation']:
 		return render(request, 'ajax_search.html',
 		              {'user_profile_object': user_profile_object})
 
-
 	else:
 		searchLocationList = list(
 			User_profile.objects.order_by().values_list('Available_service_area', flat=True).distinct())
-		print(searchLocationList)
+		#print(searchLocationList)
 		return render(request, 'Searchskills.html', {'searchLocationList': searchLocationList})
 
 
@@ -200,4 +212,3 @@ class AboutUs(TemplateView):
 
 class ContactUs(TemplateView):
 	template_name = 'contactus.html'
-
