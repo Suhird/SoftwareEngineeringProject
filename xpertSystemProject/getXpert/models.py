@@ -50,7 +50,7 @@ class User_profile(models.Model):
 	#     (u'E', u'English'),
 	#     (u'F', u'French'),
 	# )
-	languages_spoken = models.CharField(max_length=10, blank=True)
+	languages_spoken = models.CharField(max_length=120, blank=True)
 	Working_experience = models.CharField(max_length=120, blank=True)
 	charges = models.CharField(max_length=5, blank=True)
 	Profile_Tagline = models.TextField(blank=True)

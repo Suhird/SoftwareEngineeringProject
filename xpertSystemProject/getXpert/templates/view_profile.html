@@ -2,15 +2,16 @@
 <html lang="en">
 
 <head>
+    <title>getXpert</title>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="">
   <meta name="author" content="">
-    {% load static %}
+{% load static %}
   
 
-  <!-- Bootstrap -->
+ <!-- Bootstrap -->
   <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
   <link href="{% static 'css/bootstrap-theme.css' %}" rel="stylesheet">
 
@@ -28,27 +29,27 @@
     <div class="container">
 	
       <div class="navbar-header f">
-	    
-       <a class="navbar-brand " href="index.html" style="font-size:40px">getXpert</a>
+	    {% if user.is_authenticated %}
+       <a class="navbar-brand " href="{% url 'home' pk=auth_user.id %}" style="font-size:40px">getXpert</a>
+          {% else %}
+          <a class="navbar-brand " href="{% url 'landing_page' %}" style="font-size:40px">getXpert</a>
+          {% endif %}
       </div>
-	  
 	
 	
 	 <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-right">
-          <li><a class="navbar-brand " href="Searchskills.html"><span class="glyphicon glyphicon-search"></span> Search</a></li>
-		  <li><a class="navbar-brand " href="#"><span class="glyphicon glyphicon-user"></span> Contact Us</a></li>
-		  <li><a class="navbar-brand "  href="#"> <span class="glyphicon glyphicon-font"></span> About Us</a></li>
+          <li><a class="navbar-brand " href="{% url 'search' %}"><span class="glyphicon glyphicon-search"></span> Search</a></li>
+		  <li><a class="navbar-brand " href="{% url 'contactus' %}"><span class="glyphicon glyphicon-user"></span> Contact Us</a></li>
+		  <li><a class="navbar-brand "  href="{% url 'aboutus' %}"> <span class="glyphicon glyphicon-font"></span> About Us</a></li>
 		  <li>&nbsp;&nbsp;</li>
 		  
 		 <li class="dropdown">
           <a href="#" class="dropdown-toggle navbar-brand" data-toggle="dropdown"><span class="glyphicon glyphicon-user pull-right"></span></a>
           <ul class="dropdown-menu">
-            <li><a href="#">View Profile <span class="glyphicon glyphicon-eye-open pull-right"></span></a></li>
+            <li><a href="{% url 'home' pk=auth_user.id %}">View Profile <span class="glyphicon glyphicon-eye-open pull-right"></span></a></li>
             <li class="divider"></li>
-			<li><a href="ProfileCreation.html">Edit Profile <span class="glyphicon glyphicon-edit pull-right"></span></a></li>
-            <li class="divider"></li>
-            <li><a href="index.html">Sign Out <span class="glyphicon glyphicon-log-out pull-right"></span></a></li>
+            <li><a href="{% url 'logout' %}">Sign Out <span class="glyphicon glyphicon-log-out pull-right"></span></a></li>
           </ul>
         </li>
 		  
@@ -61,14 +62,21 @@
  
 
   
-  <div class="container" style="margin-top:5px;">
+  <div class="container" style="margin-top:100px;margin-bottom:100px">
 
-<div class="row space ">
+<div class="row " style="background-color:#fff; box-shadow: 0 16px 24px 2px rgba(0,0,0,.14), 0 6px 30px 5px rgba(0,0,0,.12), 0 8px 10px -5px rgba(0,0,0,.2);">
+   
+	
+        
+        
 
+
+ 
+      <div class="col-md-1"></div>
            
-			<div class="col-md-12 b">
+			<div class="col-md-10 " style="background-color:#424242;margin-top:50px; border-radius:15px;box-shadow: 0 16px 24px 2px rgba(0,0,0,.14), 0 6px 30px 5px rgba(0,0,0,.12), 0 8px 10px -5px rgba(0,0,0,.2);">
                      <div class="col-sm-4" align="center" style="padding:20px 20px 20px 20px">
-                      <img alt="User Pic" src="D:\Getxpertdesign\getXpert\img\user.jpg" id="profile-image1" class="img-circle img-responsive"> 
+                      <img alt="User Pic" src="{{user_profile.profile_pic}}" id="profile-image1" class="img-circle img-responsive">
           
                 
               
@@ -77,39 +85,43 @@
               <!-- /input-group -->
             </div>
 			
-            <div class="col-sm-8 get" style=" padding:20px 20px 20px 20px">
-            <div class="col-sm-3" ><span class="glyphicon glyphicon-user"></span> Full Name</div><div class="col-sm-9" >: Meha Gor</div>
-			<div class="col-sm-3" > <i class="fa fa-phone"></i> Phone No</div><div class="col-sm-9" >: 437-981-2507</div>
-             <div class="col-sm-3"><i class="fas fa-envelope"></i> Email Id</div><div class="col-sm-9">: gorm@uwindsor.ca</div>		 
-			<div class="col-sm-3"><span class="glyphicon glyphicon-home"></span> Address</div><div class="col-sm-9" >: 456 Josephine Ave,ON,Canada</div>
-			<div class="col-sm-3"><i class="fas fa-map-marker-alt"></i> Postal Code</div><div  class="col-sm-9">: N9B 2L1</div>			
+            <div class="col-sm-8 get" style=" padding:20px 20px 20px 20px;color:#fff">
+            <div class="col-sm-3" ><span class="glyphicon glyphicon-user"></span> Full Name</div><div class="col-sm-9" >: {{user.get_full_username}}</div>
+			<div class="col-sm-3" > <i class="fa fa-phone"></i> Phone No</div><div class="col-sm-9" >: {{user_profile.phone_number}}</div>
+             <div class="col-sm-3"><i class="fas fa-envelope"></i> Email Id</div><div class="col-sm-9">: {{user.email}}</div>
+			<div class="col-sm-3"><span class="glyphicon glyphicon-home"></span> Address</div><div class="col-sm-9" >: {{user_profile.permanent_address}}</div>
+			<!--<div class="col-sm-3"><i class="fas fa-map-marker-alt"></i> Postal Code</div><div  class="col-sm-9">: N9B 2L1</div>			-->
 		   
              			
             </div>
             <div class="clearfix"></div>
            
             </div>
+			<div class="col-md-1"></div>
     
               
 			  
 			  <div class="form-group">
   
-  <div align="left">
-  <a href="ProfileCreation.html" class="btn btn-primary" style="margin-top:30px">Edit profile</a>
+  <!--<div align="center">-->
+  <!--<a href="ProfileCreation.html" class="btn btn-primary" style="margin-top:50px">Edit profile</a>-->
   
     
   </div>
+
+
+			  
+			  
+
+
+<div class="col-md-12 " style="margin-bottom:50px">
+<div class="col-md-1"></div>
+<div class="col-md-4" align="center" style="background-color:#424242; box-shadow: 0 16px 24px 2px rgba(0,0,0,.14), 0 6px 30px 5px rgba(0,0,0,.12), 0 8px 10px -5px rgba(0,0,0,.2);color:fff;margin-top:20px; padding:20px 20px 20px 20px; border-color:#fff; border-radius:15px">
+{{user_profile.Profile_Tagline}}
+
 </div>
-
-<div class="col-md-12 b">
-
-<div align="center" style="background-color:#fff; color:black;margin-top:50px; padding:20px 20px 20px 20px; border-color:#fff; border-radius:15px">
-<h4 style="color:black padding-top:10px; padding-left:10px" align="left" >About Me:</h4> kbiusdhjnoikjas iohklnamds jolkm,as.d uoiklfdiojklmsdfcxijokl uiojlkfsdc<br/>
-uohvdsiojvkl uojnksdv hojknlmsdc uihjknm, uhjklm uhijklm uhjklm uhjklm, uhijklm y8iudh\ksjgfudhjbscnm
-
-</div>
-
-<div class="col-md-6" style="margin-top:100px">
+<div class="col-md-2"></div>
+<div class="col-md-4" style="margin-top:20px;color:#fff;box-shadow: 0 16px 24px 2px rgba(0,0,0,.14), 0 6px 30px 5px rgba(0,0,0,.12), 0 8px 10px -5px rgba(0,0,0,.2); background-color:#424242; border-radius:15px">
 
 <div class="table-responsive responsiv-table">
   <table class="table bio-table">
@@ -117,61 +129,44 @@ uohvdsiojvkl uojnksdv hojknlmsdc uihjknm, uhjklm uhijklm uhjklm uhjklm, uhijklm 
      
      <tr>    
         <td>Birthday</td>
-        <td>: 25/05/1996</td>       
+        <td>: {{user_profile.date_of_birth}}</td>
     </tr>
     <tr>    
         <td>Gender</td>
-        <td>: Female</td>       
+        <td>: {{gender}}</td>
     </tr>
 	
 	<tr>    
         <td>Qualification</td>
-        <td>: BE-IT</td>       
+        <td>: {{user_profile.qualification}}</td>
     </tr>
     <tr>
         <td>Occupation</td>
-        <td>: Web Designer</td> 
+        <td>: {{user_profile.occupation}}</td>
      </tr>
 	<tr>
         <td>Charges:</td>
-        <td>:18$/hour</td> 
+        <td>: ${{user_profile.charges}}</td>
      </tr>
 	  <tr>  
         <td>Skills</td>
-        <td>: java,python</td> 
+        <td>: {{skill_list}}</td>
      </tr>
 
-    </tbody>
-  </table>
-  </div><!--table-responsive close-->
-</div><!--col-md-6 close-->
-
-<div class="col-md-6" style="margin-top:100px">
-
-<div class="table-responsive responsiv-table">
-  <table class="table bio-table">
-      <tbody>
-	   
+   	   
      
-     <tr>    
-        <td>Available Days</td>
-        <td>: Sunday,Monday</td>       
-    </tr>
-	<tr>    
-        <td>Available Time</td>
-        <td>: 9am-2pm</td>       
-    </tr>
+     
     <tr>    
         <td>Available Service Area</td>
-        <td>: Windsor</td>       
+        <td>: {{user_profile.Available_service_area}}</td>
     </tr>
     <tr>
         <td>Languages Known</td>
-        <td>: English, Hindi</td> 
+        <td>: {{list_of_languages}}</td>
      </tr>
 	 <tr>
         <td>Working Experience</td>
-        <td>: 2 years</td> 
+        <td>: {{user_profile.Working_experience}} yrs</td>
      </tr>
 	  
     </tbody>
@@ -179,12 +174,12 @@ uohvdsiojvkl uojnksdv hojknlmsdc uihjknm, uhjklm uhijklm uhjklm uhjklm, uhijklm 
   </div><!--table-responsive close-->
 </div><!--col-md-6 close-->
 
-</div>
+<div class="col-md-1" ></div>
 
 </div>
 
    </div>
-
+        </div>
   <div class="footer">
     <div class="container">
       <div class="row">
@@ -201,7 +196,7 @@ uohvdsiojvkl uojnksdv hojknlmsdc uihjknm, uhjklm uhijklm uhjklm uhjklm, uhijklm 
     </div>
   </div>
   
-  
+
   <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
   <script src="{% static 'js/bootstrap.min.js' %}"></script>
 

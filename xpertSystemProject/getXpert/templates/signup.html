@@ -36,19 +36,25 @@
 
 <div id="header">
     <div class="container ">
+        {% if messages %}
+                <li class="col-md-12 b" style="margin-top:200px; margin-left:300px; height:100%; width:50%;"
+                     align="center">
+                    <ul class="messages">
+                        {% for message in messages %}
 
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                        <div class="col-xs-12 col-sm-12 col-md-12" style="color:white">
+                            <a href="{% url 'login' %}" style="color:#01DFD7">Please Login</a>
+                        </div>
+                    </ul>
+                </div>
+{% else %}
         <div class="row">
             <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3 m">
-                {% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    {% endfor %}
-      <div class="col-xs-12 col-sm-12 col-md-12" style="color:white">
-                                <a href="{% url 'login' %}" style="color:white">Please Login</a>
-                            </div>
-</ul>
-                {% else %}
+
+
+
                 <form role="form " method="post" action="">
                     {% csrf_token %}
                     <h2>
@@ -115,6 +121,7 @@
 
 
         </div>
+
     </div>
 
 </div>

@@ -100,27 +100,26 @@ a:after {
 .btn-theme  {
   color: #fff;
   height:50px;
-   width:200px;
+   width:150px;
   font-size: 20px;
   background-color: #2b78af  ;
   border-color: #fff;
   border-radius:50px;
 }
 .btn-th  {
-  color: #fff;
+  color: #2b78af;
   height:50px;
-   width:530px;
+   width:150px;
    font-size: 20px;
-   background-color: #17202A  ;
-  border-color: #fff;
-  border-radius:10px;
-  margin-top:10px;
-  margin-bottom:20px;
+   background-color: #fff  ;
+  border-color: #2b78af;
+  border-radius:50px;
+ 
 }
 .btn-th:hover  {
-  color: #17202A; 
-  background-color: #fff;
-  border-color:#17202A ;
+  color: #fff; 
+  background-color: #58acaf;
+  border-color:#fff ;
 }
 .dropdown ul.dropdown-menu {
     border-radius:4px;
@@ -130,9 +129,9 @@ a:after {
 }
 
 .btn-theme:hover  {
-  color: #2b78af ;
+  color: #58acaf ;
   background-color: #fff;
-  border-color: #17202A ;
+  border-color: #58acaf ;
 }
 form.signup {
 	margin-top: 30px;
@@ -157,7 +156,7 @@ a.navbar-brand {
 
 
 
-.container .inner{width: 480px;   background: rgba(55,55,55, 0.4); -webkit-transform: skew(30deg,10deg);-moz-transform: skew(30deg,10deg); -o-transform: skew(30deg,10deg); transition-duration: 0.7s;}
+.container .inner{ -webkit-transform: skew(5deg,10deg);-moz-transform: skew(5deg,10deg); -o-transform: skew(5deg,10deg); transition-duration: 0.7s; background:transparent;}
 
 .container .inner:hover{-webkit-transform:skew(0deg,0deg); -moz-transform:skew(0deg,0deg);-o-transform:skew(0deg,0deg);transition-duration: 0.7s; background: transparent;}
 
@@ -193,6 +192,16 @@ color:#fff;}
 	padding-left:100px;
 	padding-right:100px;
 }
+.nav-pills .nav-item .nav-link {
+    
+    font-size: 20px;
+    font-weight: 500;
+    min-width: 100px;
+    color: #0174df;
+    transition: all .3s;
+    
+    text-align: center;
+}
 
 
 #header {	
@@ -219,7 +228,13 @@ color:#fff;}
     background-size: cover;
 }
 
+<!-- -->
 
+
+.team-img:hover {
+    background:#f5f5f5;
+    
+}
 
 #header h1 {
 	margin-bottom: 50px;
